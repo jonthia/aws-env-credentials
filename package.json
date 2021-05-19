@@ -14,7 +14,6 @@
   "author": "Jonathan Thia",
   "license": "ISC",
   "publishConfig": {
-    "registry":"https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com"
   },
-  
 }
