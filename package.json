@@ -1,6 +1,6 @@
 {
   "name": "aws-env-credentials",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Retrieves and sets AWS credentials as shell environment variables.",
   "repository": {
     "type": "git",
@@ -13,7 +13,10 @@
   "scripts": {
     "start": "node index.js"
   },
-  "keywords": ["aws", "credentials"],
+  "keywords": [
+    "aws",
+    "credentials"
+  ],
   "author": "Jonathan Thia",
   "license": "ISC"
 }
