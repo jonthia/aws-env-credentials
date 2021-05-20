@@ -17,12 +17,17 @@ exec("which aws", async (error) => {
 
   exec(`aws sts get-caller-identity`, (arnError, arnStdout, arnStderr) => {
     if (arnError || arnStderr) {
-      console.error(arnError || arnStderr);
+      console.error(
+        `Unable to auto detect ARN. You can configure credentials by running "aws configure".`
+      );
     }
-    const { Arn } = JSON.parse(arnStdout);
-    rl.question("REGION (eg. ap-southeast-2): ", (REGION) => {
-      rl.question("ARN (eg. arn:aws:iam::444484274653:mfa/name): ", (ARN) => {
-        rl.question("OTP (eg. 123456): ", (OTP) => {
+    let Arn;
+    if (arnStdout) {
+      Arn = JSON.parse(arnStdout).Arn;
+    }
+    rl.question("ARN (eg. arn:aws:iam::444824746543:mfa/user): ", (ARN) => {
+      rl.question("OTP (eg. 123456): ", (OTP) => {
+        rl.question("REGION (eg. ap-southeast-2): ", (REGION) => {
           exec(
             `aws sts get-session-token --serial-number ${ARN} --token-code ${OTP}`,
             (tokenError, tokenStdout, tokenStderr) => {
@@ -50,9 +55,9 @@ exec("which aws", async (error) => {
             }
           );
         });
+        rl.write("ap-southeast-2");
       });
-      if (Arn) rl.write(Arn.replace(":user/", ":mfa/"));
     });
-    rl.write("ap-southeast-2");
+    if (Arn) rl.write(Arn.replace(":user/", ":mfa/"));
   });
 });
