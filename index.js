@@ -25,7 +25,7 @@ exec("which aws", async (error) => {
     if (arnStdout) {
       Arn = JSON.parse(arnStdout).Arn;
     }
-    rl.question("ARN (eg. arn:aws:iam::444824746543:mfa/user): ", (ARN) => {
+    rl.question("ARN (eg. arn:aws:iam::23452422453:mfa/user): ", (ARN) => {
       rl.question("OTP (eg. 123456): ", (OTP) => {
         rl.question("REGION (eg. ap-southeast-2): ", (REGION) => {
           exec(
