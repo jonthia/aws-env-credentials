@@ -39,18 +39,36 @@ exec("which aws", async (error) => {
               const { Credentials } = JSON.parse(tokenStdout);
               const { AccessKeyId, SecretAccessKey, SessionToken } =
                 Credentials;
-              exec(`
-                export AWS_ACCESS_KEY_ID=${AccessKeyId}
-                export AWS_SECRET_ACCESS_KEY=${SecretAccessKey}
-                export AWS_SESSION_TOKEN=${SessionToken}
-                export AWS_REGION=${REGION}
-              `);
-              console.log("[Success] AWS Credentials set.");
-              console.log(`AWS_ACCESS_KEY_ID=${AccessKeyId.substr(0, 8)}...`);
-              console.log(
-                `AWS_SECRET_ACCESS_KEY=${SecretAccessKey.substr(0, 8)}...`
-              );
-              console.log(`AWS_SESSION_TOKEN=${SessionToken.substr(0, 8)}...`);
+              let setEnv;
+              let copy;
+              switch (process.platform) {
+                case "win32":
+                  setEnv = (name, value) => `setx ${name} ${value}`;
+                  copy = (string) => `echo "${string}" | clip`;
+                  break;
+                case "darwin":
+                  setEnv = (name, value) => `export ${name}=${value}`;
+                  copy = (string) => `echo "${string}" | pbcopy`;
+                  break;
+                default:
+                  setEnv = (name, value) => `${name}=${value}`;
+              }
+              const output = `${setEnv("AWS_ACCESS_KEY_ID", AccessKeyId)}
+${setEnv("AWS_SECRET_ACCESS_KEY", SecretAccessKey)}
+${setEnv("AWS_SESSION_TOKEN", SessionToken)}
+${setEnv("AWS_REGION", REGION)}`;
+              if (copy) {
+                exec(copy(output));
+                console.log(
+                  "[Success] AWS Credentials copied to clipboard. Paste and execute to set environment variables."
+                );
+              } else {
+                console.log(
+                  "[Success] AWS Credentials retrieved. Please set as environment variables manually."
+                );
+                console.log(output);
+              }
+
               process.exit(0);
             }
           );
